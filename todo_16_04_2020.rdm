@@ -1,2 +1,5 @@
-- Continue by using other "csv" files and make the first gradient boost model (try lightgbm)
-- then Try to build an API for the model ( i think it's the next better choice)
+- Continue by using other "csv" files and make the first
+ gradient boost model (try lightgbm)
+ 
+- then Try to build an API for the model 
+( i think it's the next better choice)
