@@ -8,12 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import xgboost as xgb
-from xgboost import plot_importance
-from sklearn.metrics import r2_score
 from sklearn.decomposition import KernelPCA, PCA
 from sklearn.manifold import TSNE
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, StandardScaler, PolynomialFeatures
 
@@ -433,20 +430,3 @@ def aggregate_client(df, group_vars, df_names):
     gc.collect()
 
     return df_by_client
-# print out importances features (bar plot horiz)
-
-
-def print_importance_features(model, index):
-    # Create a pd.Series of features importances
-    importances = pd.Series(data=model.feature_importances_, index=index)
-
-    # Sort importances
-    importances_sorted = importances.sort_values()
-    importances_sorted_toplot = importances_sorted[importances_sorted >= 0.5 *  # trick to print just some most important features
-                                                   importances.mean()]
-
-    # Draw a horizontal barplot of importances_sorted
-    importances_sorted_toplot.plot(kind='barh', color='lightgreen')
-    plt.title('Features Importances')
-    plt.show()
-    return importances
