@@ -13,13 +13,15 @@ from xgboost import plot_importance
 from sklearn.metrics import r2_score
 from sklearn.decomposition import KernelPCA, PCA
 from sklearn.manifold import TSNE
+from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, StandardScaler, PolynomialFeatures
 
-
 # -------------------------------------------------------------------------------------------------
 # Function to calculate missing values by column# Funct
+
+
 def missing_values_table(df):
     # Total missing values
     mis_val = df.isnull().sum()
