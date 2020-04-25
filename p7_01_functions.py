@@ -10,7 +10,9 @@ import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import KernelPCA, PCA
 from sklearn.manifold import TSNE
+from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import SelectFromModel
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, StandardScaler, PolynomialFeatures
 
@@ -40,7 +42,10 @@ def missing_values_table(df):
     print("Your selected dataframe has " + str(df.shape[1]) + " columns.\n"
           "There are " + str(mis_val_table_ren_columns.shape[0]) +
           " columns that have missing values.")
-
+    # free memory 
+    gc.enable()
+    del mis_val, mis_val_percent, mis_val_table
+    gc.collect()
     # Return the dataframe with missing information
     return mis_val_table_ren_columns
 # -------------------------------------------------------------------------------------------------
@@ -430,3 +435,24 @@ def aggregate_client(df, group_vars, df_names):
     gc.collect()
 
     return df_by_client
+
+
+def print_importance_features(model, index):
+    """
+    Return
+    --------
+    return dataframe with sorted features importances higher than the mean 
+     """
+    # Create a pd.Series of features importances
+    importances = pd.Series(data=model.feature_importances_, index=index)
+
+    # Sort importances
+    importances_sorted = importances.sort_values()
+    importances_sorted_toplot = importances_sorted[importances_sorted >= importances.mean()]  # trick to print just some most important features
+                                                  
+
+    # Draw a horizontal barplot of importances_sorted
+    importances_sorted_toplot.plot(kind='barh', color='lightgreen')
+    plt.title('Features Importances')
+    plt.show()
+    return importances_sorted_toplot
