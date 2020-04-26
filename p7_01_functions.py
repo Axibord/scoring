@@ -450,9 +450,9 @@ def print_importance_features(model, index):
     importances_sorted = importances.sort_values()
     importances_sorted_toplot = importances_sorted[importances_sorted >= importances.mean()]  # trick to print just some most important features
                                                   
-
+    top_10_features = importances_sorted_toplot[:20]
     # Draw a horizontal barplot of importances_sorted
-    importances_sorted_toplot.plot(kind='barh', color='lightgreen')
+    top_10_features.plot(kind='barh', color='lightgreen')
     plt.title('Features Importances')
     plt.show()
     return importances_sorted_toplot

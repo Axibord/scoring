@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import gc
 import time
+import pickle
 from contextlib import contextmanager
 import lightgbm as lgb
 from lightgbm import LGBMClassifier
@@ -358,6 +359,25 @@ def display_importances(feature_importance_df_):
     plt.savefig('lgbm_importances01.png')
 
 
+def outliers_transformer(df):
+    """ Take dataframe and transform all outliers of each column to the median value of that column """
+
+    # list of columns names
+    columns_names = list(df.columns)
+
+    # transform each column outliers to the median value of that column
+    for col in columns_names:
+        if col != 'TARGET':
+            median = df[col].median()
+            std = df[col].std()
+
+            df.loc[((df[col] - median).abs() > std) == True, col] = np.nan
+
+            df[col].fillna(median, inplace=True)
+
+    return df
+
+
 def main(debug=False):
     num_rows = 10000 if debug else None
     df = application_train_test(num_rows)
@@ -392,8 +412,8 @@ def main(debug=False):
         del cc
         gc.collect()
 
-    # save main data to csv    
-    df.to_csv('main.csv',index=False)
+    # save main data to csv
+    df.to_csv('main.csv', index=False)
 
     return df
 
