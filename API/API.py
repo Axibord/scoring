@@ -20,22 +20,20 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api', methods=['POST'])
+@app.route('/api', methods=['POST','GET'])
 def predict():
     if request.method == 'POST':
         # get data
-       # data = request.files['test.json'] #we use this method with <form>html tag
-        data = request.get_json(force=True)
-       #data = request.json
+        #data = request.files['file'] #we use this method with <form>html tag
+        #data = request.get_json(force=True)
+        data = request.json
        
         # convert data into dataframe
-        #data.update((x, [y]) for x, y in data.items())
-        
-        # data_df = pd.DataFrame.from_dict(data, orient='index')
-        # data_df.reset_index(level=0, inplace=True)
-        data = json.loads(data)
-        data = np.array(data)
-        data = data.reshape(-1,1)
+        # data = json.loads(data)
+        data = pd.DataFrame(data)
+        data.reset_index(level=0, inplace=True)
+        data.replace([np.inf, -np.inf], np.nan, inplace=True)
+        data.fillna(0,inplace=True)
         #scale data
         scaler = StandardScaler()
         data_scaled = scaler.fit_transform(data)
@@ -46,7 +44,6 @@ def predict():
         # transform it to dict and send back to browser
         result_dict_output = dict(enumerate(result))
      
-
     # return data
     return jsonify(results = result_dict_output)
 
