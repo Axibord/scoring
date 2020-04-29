@@ -24,23 +24,21 @@ def index():
 def predict():
     if request.method == 'POST':
         # get data
-        #data = request.files['file'] #we use this method with <form>html tag
-        #data = request.get_json(force=True)
         data = request.json
        
         # convert data into dataframe
-        # data = json.loads(data)
         data = pd.DataFrame(data)
         data.reset_index(level=0, inplace=True)
         data.replace([np.inf, -np.inf], np.nan, inplace=True)
         data.fillna(0,inplace=True)
+        
         #scale data
         scaler = StandardScaler()
         data_scaled = scaler.fit_transform(data)
+        
         # predictions
         result = model.predict(data_scaled)
         
-    
         # transform it to dict and send back to browser
         result_dict_output = dict(enumerate(result))
      
