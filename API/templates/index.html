@@ -5,26 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
         body{background: linear-gradient(to right, rgb(0, 64, 128), rgb(128, 0, 64)); font-family: verdana; color: #fff; padding: 30px;}
-        h1{font-size: 48px; text-transform: uppercase; letter-spacing: 2px;text-align: center;}
-        p{font-size: 16px; text-align: center;}
+        h1{font-size: 48px; text-transform: uppercase; letter-spacing: 2px;text-align: center; margin-bottom: 50px;}
+        p{font-size: 20px; text-align: center;}
+        form{text-align: center; margin-top: 50px;}
+        h2{font-size: 38px; text-transform: uppercase; letter-spacing: 2px;text-align: center; margin-bottom: 50px;}
     </style>
     <title>Myapp</title>
 </head>
 <body>
     <h1>Interface de programmation d'application </h1>
-    <p><b>INSTRUCTIONS:</b></p>
-    <p><i>Le modéle prédit 1 pour les personnes qui ne payeront pas leur crédits</i></p>
+    <h2><b>methode 1: endpoint API:</b></h2>
+    <p><i>Le modéle prédit: 1 (pour les personnes qui ne payeront pas leur crédits)</i></p>
     <p>1- créez un ficher python ou le langage de votre choix</p>
     <p>2- importez les librairies correspondantes, pour python: import requests et json </p>
     <p>3- transformez vos données a prédire en format JSON en utilisant le module json </p>
     <p>4- créez une variable et assignez une requete 'POST' en incluant les données transformés au format json </p>
     <p>5- Affichez le résultat de la requete ""print(variable.json())"" </p>
+    <h2>methode 2: Upload un ficher JSON </h2>
 
-    <!-- <form action = "http://localhost:5000/uploader" method = "POST" 
+    <form action = "http://localhost:5000/uploader" method = "POST" 
          enctype = "multipart/form-data">
          <input type = "file" name = "file" />
          <input type = "submit"/>
-      </form>    -->
+      </form>   
 	
 </body>
 </html>
