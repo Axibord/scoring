@@ -1,9 +1,6 @@
 .vscode
 .ipynb_checkpoints
 __pycache__
-master_data_p1_p3.csv
-master_df_final.csv
-master_final_cleaned.csv
 data
 main.csv
 streamlit_app
