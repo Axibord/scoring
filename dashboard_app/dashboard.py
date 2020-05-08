@@ -1,64 +1,36 @@
-import json, joblib
-import pandas as pd
-import numpy as np
 import streamlit as st
-import matplotlib.pyplot as plt
+from functions import *
+import pandas as pd
+import json, joblib
+
 
 @st.cache
 def data_load():
     data = pd.read_csv('streamlit_data.csv')
+    data['DAYS_BIRTH'] = data['DAYS_BIRTH']/365*(-1)
+
     return data
-
-
-def process_data_all(range_choosed):
-        data = data_load()
-        score_data = data[['SK_ID_CURR','score']].copy()
-        score_slider = np.subtract((100),range_choosed)
-        score_slider = np.divide(score_slider,(100))
-        score_data = score_data[(score_data['score']<=score_slider[0]) & (score_data['score']>=score_slider[1])]
-        score_data['score'] = 100 - (score_data['score']*100).round(2)
-        score_data['score'] = score_data['score'].astype(int)
-        score_data['score'] = score_data['score'].astype('str')
-        score_data['score'] = score_data['score'] + ' %'
-        return score_data
-    
-    
-def process_data_client(number_ID):
-    data = data_load()
-    id_client = data[['SK_ID_CURR','score','CODE_GENDER','AMT_INCOME_TOTAL','AMT_CREDIT',
-                      'DAYS_BIRTH','REGION_RATING_CLIENT']].copy()
-    id_client['score'] = 100 - (id_client['score']*100).round(2)
-    id_client['score'] = id_client['score'].astype(int)
-    id_client['score'] = id_client['score'].astype('str')
-    id_client['score'] = id_client['score'] + ' %'
-    id_client = id_client[id_client['SK_ID_CURR']==number_ID]
-    id_score = list(id_client['score'].values)
-    
-    id_client.rename(columns={'score':'Chance de remboursement'}, inplace=True)
-    return id_client[['SK_ID_CURR','Chance de remboursement']],id_client, id_score
 
 def main():
     
-    page = st.sidebar.selectbox("Choose a Page", ["Score interpretation", "Informations about clients", "Make new predictions"])
+    # sidebare select page
+    page = st.sidebar.selectbox("Choose a Page", ["Score interpretation", "Make new predictions"])
 
     if page == 'Score interpretation':
-        
+        # titre
         st.title("Interpretation du score d'un client")
         
+        # sidebar options
         st.sidebar.subheader("Rechercher par ID :") # Feature 1
         number_ID = st.sidebar.text_input(" ",value=393130)
-        
         st.sidebar.subheader("Les chances qu'un client rembourse son pret :")# Feature 2
-        choosen_range = st.sidebar.slider (' ',0.0, 100.0, value=(25.0, 75.0))
-        
-        st.sidebar.subheader("informations descriptives :") # Feature 3
-        ages = st.sidebar.slider("Tranche d'âge", 0, 100, value=(25, 75)) # ages
-        gender = st.sidebar.multiselect("Sexe", ('Homme', 'Femme')) # gender
-        
+        choosen_range = st.sidebar.slider (' ',0.0, 100.0, value=(90.0, 99.0))
+             
         score_data = process_data_all(choosen_range)
-        
+       
         if number_ID is not None:
             number_ID = int(number_ID)
+           
             id_client_score, id_client_all, id_score = process_data_client(number_ID)
             st.table(id_client_score)
            
@@ -70,15 +42,33 @@ def main():
             ))
         st.title("Score des clients selon l'intervalle selectionné")
         st.subheader("--> Il y'a** {} **clients qui ont entre** {}% et {}% **de chance de rembourser leur prêts ".format(len(score_data),choosen_range[0],choosen_range[1]))
-        st.table(score_data)
-   
-    elif page == 'Informations about clients':
-        plt.hist(data['CODE_GENDER'])
+        if st.checkbox('Afficher les données'):
+            st.write(score_data)
+            
         
-        st.pyplot()
-
+        st.subheader("Filtres:")
+        gender = st.selectbox("Genre", ('Homme + Femme','Homme', 'Femme')) # gender
+        ages = st.slider("âge", 21, 70, value=(25, 64)) # ages
+        st.write(ages)
+        nchilderns = st.slider("Nombre d'enfants",0, 14, value=(None)) # N of childerns
+        own_house = st.checkbox("House owner") # house
+        own_car = st.checkbox("Car owner") # car
         
-    
+        filters = {
+            "score_range": choosen_range,
+            "gender": gender,
+            "age": ages,
+            "number_childerns": nchilderns,
+            "house_owner": own_house,
+            "car_owner": own_car
+        }
+        
+        filtred_data = scatter_plot_filters(filters)
+        st.subheader("Résultats en fonction des filtres choisis:")
+        st.subheader("- Nombre de clients: %d"% (len(filtred_data)))
+        st.subheader("- Score moyen: {}% de chances que ces clients remboursent leur prêt   ".format (100-(100*(filtred_data['score'].mean())).round(2)))
+        st.subheader("- âge moyen: %d ans "% (filtred_data['DAYS_BIRTH'].mean()))
+  
     elif page == 'Make new predictions':
         uploaded_file = st.file_uploader("Choose a JSON file", type="json")
         if uploaded_file is not None:
