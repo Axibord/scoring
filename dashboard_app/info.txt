@@ -6,8 +6,9 @@ Permettre de comparer les informations descriptives relatives à un client à l�
 
 
 
-- retourne SCORE moyen, age moyen etc.... ! en fonction des filtres
-- mettre une checkbox pour filtres (montrer juste les statistiques desctivies sinon)
+- rajouter filtre selon le montant du Pret 
+- rajouter un filtre selon le revenue des clients (range ?, slider, saisie manuelle)
+
 
 Informations:
 

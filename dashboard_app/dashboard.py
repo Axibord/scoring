@@ -8,7 +8,6 @@ import json, joblib
 def data_load():
     data = pd.read_csv('streamlit_data.csv')
     data['DAYS_BIRTH'] = data['DAYS_BIRTH']/365*(-1)
-
     return data
 
 def main():
@@ -28,6 +27,7 @@ def main():
              
         score_data = process_data_all(choosen_range)
        
+        #  part 1
         if number_ID is not None:
             number_ID = int(number_ID)
            
@@ -37,23 +37,26 @@ def main():
             st.subheader("--> Le client portant l'id: '{}' a** {} **de chance de rembourser son prêt".format(number_ID, id_score[0]))
             st.subheader('**Informations descriptives du client:**')
             id_client_all['CODE_GENDER'].replace({0:'Homme',1:'Femme'},inplace=True)
-            st.write('**Sexe**: {} \n \n **Revenue total**: {}$ \n \n**Montant du prêt**: {}$ \n'.format(
+            st.write('**Genre**: {} \n \n **Revenue total**: {}$ \n \n**Montant du prêt**: {}$ \n'.format(
                     id_client_all['CODE_GENDER'].values, id_client_all['AMT_INCOME_TOTAL'].values, id_client_all['AMT_CREDIT'].values
             ))
+            
+        # Part 2     
         st.title("Score des clients selon l'intervalle selectionné")
         st.subheader("--> Il y'a** {} **clients qui ont entre** {}% et {}% **de chance de rembourser leur prêts ".format(len(score_data),choosen_range[0],choosen_range[1]))
         if st.checkbox('Afficher les données'):
             st.write(score_data)
             
-        
+        # Filters
         st.subheader("Filtres:")
+        
         gender = st.selectbox("Genre", ('Homme + Femme','Homme', 'Femme')) # gender
         ages = st.slider("âge", 21, 70, value=(25, 64)) # ages
-        st.write(ages)
-        nchilderns = st.slider("Nombre d'enfants",0, 14, value=(None)) # N of childerns
+        nchilderns = st.slider("Nombre d'enfants",0, 14) # N of childerns
         own_house = st.checkbox("House owner") # house
         own_car = st.checkbox("Car owner") # car
         
+        # dictionary of filters outputs to send to function to update data
         filters = {
             "score_range": choosen_range,
             "gender": gender,
@@ -63,12 +66,18 @@ def main():
             "car_owner": own_car
         }
         
-        filtred_data = scatter_plot_filters(filters)
-        st.subheader("Résultats en fonction des filtres choisis:")
-        st.subheader("- Nombre de clients: %d"% (len(filtred_data)))
-        st.subheader("- Score moyen: {}% de chances que ces clients remboursent leur prêt   ".format (100-(100*(filtred_data['score'].mean())).round(2)))
-        st.subheader("- âge moyen: %d ans "% (filtred_data['DAYS_BIRTH'].mean()))
-  
+        # update data
+        data_updated = update_data(filters)
+        
+        
+        # descriptive results after applying filters 
+        st.subheader("Résultat du filtre:")
+        st.subheader("- Nombre de clients: %d"% (len(data_updated)))
+        st.subheader("- Score moyen: {}% de chances que ce groupe de clients remboursent leur prêts   ".format (100-(100*(data_updated['score'].mean())).round(2)))
+        st.subheader("- âge moyen: %d ans "% (data_updated['DAYS_BIRTH'].mean()))
+        scatter_plot(data_updated)
+        
+        
     elif page == 'Make new predictions':
         uploaded_file = st.file_uploader("Choose a JSON file", type="json")
         if uploaded_file is not None:

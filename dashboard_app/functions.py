@@ -47,26 +47,33 @@ def gender_update(gender_output, data, col_name):
 def age_update(age_output, data, col_name):
     return data[(data[col_name]<=age_output[1]) & (data[col_name]>=age_output[0])]
 #------------------------------------------------------------------------------------------------        
-def childrens_update():
-    pass
+def childrens_update(number_child, data, col_name):
+    return data[(data[col_name]<=number_child)]
+
 #------------------------------------------------------------------------------------------------    
-def house_update():
-    pass
+def house_update(house_owner, data, col_name):
+    if house_owner == True:
+        return data[(data[col_name]== 1)]
+    else:
+        return data[(data[col_name]== 0)]
+    
 #------------------------------------------------------------------------------------------------    
-def car_update():
-    pass
+def car_update(car_owner, data, col_name):
+    if car_owner == True:
+        return data[(data[col_name]== 1)]
+    else:
+        return data[(data[col_name]== 0)]
+    
 #------------------------------------------------------------------------------------------------    
-def scatter_plot_filters(filters):
+def update_data(filters):
     """Parameters
     --------
-    filters: dictionary of filters outputs from dashboard to filter the data 
+    filters: dictionary of filters outputs to filter the dataframe 
     Return
     --------
-    Return scatter plot with filters applied
-     """
+    Return updated dataframe
+    """
      
-    
-    
     score_data = data[['SK_ID_CURR','score','CODE_GENDER','AMT_INCOME_TOTAL','AMT_CREDIT',
                     'DAYS_BIRTH','REGION_RATING_CLIENT','FLAG_OWN_CAR','FLAG_OWN_REALTY','CNT_CHILDREN']].copy()
     
@@ -75,11 +82,22 @@ def scatter_plot_filters(filters):
     score_data = score_data[(score_data['score']<=score_slider[0]) & (score_data['score']>=score_slider[1])]
     score_data = gender_update(filters['gender'], score_data, col_name='CODE_GENDER')
     score_data = age_update(filters['age'], score_data, col_name='DAYS_BIRTH')
-  
+    score_data = childrens_update(filters['number_childerns'], score_data, col_name='CNT_CHILDREN')
+    score_data = house_update(filters['house_owner'], score_data, col_name='FLAG_OWN_REALTY')
+    score_data = car_update(filters['car_owner'], score_data, col_name='FLAG_OWN_CAR')
     
     plot_data = score_data.head(1000)
+    return plot_data
     
-    st.vega_lite_chart(plot_data, {
+def scatter_plot(data):
+    """Parameters
+    --------
+    data: updated dataframe 
+    Return
+    --------
+    Return scatter plot
+    """
+    st.vega_lite_chart(data, {
             'width': 'container',
             'height': 400,
             'mark':'circle',
@@ -101,9 +119,6 @@ def scatter_plot_filters(filters):
                 'type':'nominal'}
                 }
             }, use_container_width=True)
-    return score_data
-    
-    
     
 #------------------------------------------------------------------------------------------------     
     
