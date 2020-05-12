@@ -22,7 +22,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api', methods=['POST', 'GET'])
+@app.route('/api', methods=['POST'])
 def predict():
     if request.method == 'POST':
         # get data
@@ -34,7 +34,6 @@ def predict():
         data.fillna(0, inplace=True)
         
         # scale data
-       
         data_scaled = scaler.transform(data)
 
         # predictions

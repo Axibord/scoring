@@ -8,8 +8,6 @@
 # - Modularity: one function for each table (except bureau_balance and application_test)
 # - One-hot encoding for categorical features
 # All tables are joined with the application DF using the SK_ID_CURR key (except bureau_balance).
-# You can use LightGBM with KFold or Stratified KFold.
-
 
 from functions import *
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -57,6 +55,5 @@ def main(debug=False):
 
 
 if __name__ == "__main__":
-    submission_file_name = "submission_kernel02.csv"
     with timer("Full model run"):
         main()
