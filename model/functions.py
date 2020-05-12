@@ -288,14 +288,11 @@ def outliers_transformer(df):
 
     # transform each column outliers to the median value of that column
     for col in columns_names:
-        if col != 'TARGET':
+        if col != 'TARGET' | col != 'SK_ID_CURR':
             median = df[col].median()
             std = df[col].std()
-
             df.loc[((df[col] - median).abs() > std) == True, col] = np.nan
-
             df[col].fillna(median, inplace=True)
-
     return df
 
 

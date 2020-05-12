@@ -1,0 +1,28 @@
+(finished) Permettre de visualiser le score et l’interprétation de ce score pour chaque client de façon intelligible pour une personne non experte en data science.
+
+Permettre de visualiser des informations descriptives relatives à un client (via un système de filtre).
+
+Permettre de comparer les informations descriptives relatives à un client à l’ensemble des clients ou à un groupe de clients similaires.
+
+
+
+- rajouter filtre selon le montant du Pret 
+- rajouter un filtre selon le revenue des clients (range ?, slider, saisie manuelle)
+- deployer l'application streamlit
+
+Informations:
+
+CODE_GENDER,        Gender of the client
+FLAG_OWN_CAR,       Flag if the client owns a car
+FLAG_OWN_REALTY,    Flag if client owns a house or flat
+CNT_CHILDREN,       Number of children the client has
+AMT_INCOME_TOTAL,   Income of the client
+AMT_CREDIT,         Credit amount of the loan
+
+
+DAYS_BIRTH,         Client's age in days at the time of application
+OCCUPATION_TYPE,    What kind of occupation does the client have,
+CNT_FAM_MEMBERS,    How many family members does client have,
+REGION_RATING_CLIENT,   "Our rating of the region where client lives (1,2,3)",
+
+                               (Sufficient)
