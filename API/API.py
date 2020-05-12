@@ -7,7 +7,7 @@ import json
 from sklearn.preprocessing import StandardScaler
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 
-# load model
+# load model and scaler
 model = joblib.load('model.pkl')
 scaler = joblib.load('scaler.joblib',mmap_mode='r+')
 

@@ -8,7 +8,7 @@ Permettre de comparer les informations descriptives relatives à un client à l�
 
 - rajouter filtre selon le montant du Pret 
 - rajouter un filtre selon le revenue des clients (range ?, slider, saisie manuelle)
-
+- deployer l'application streamlit
 
 Informations:
 

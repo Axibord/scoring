@@ -18,7 +18,7 @@ def process_data_all(range_choosed):
     """
     
     score_data = data[['SK_ID_CURR','score','CODE_GENDER','AMT_INCOME_TOTAL','AMT_CREDIT',
-                    'DAYS_BIRTH','REGION_RATING_CLIENT']].copy()
+                    'DAYS_BIRTH','REGION_RATING_CLIENT','FLAG_OWN_CAR','FLAG_OWN_REALTY','CNT_CHILDREN']].copy()
     score_slider = np.subtract((100),range_choosed)
     score_slider = np.divide(score_slider,(100))
     score_data = score_data[(score_data['score']<=score_slider[0]) & (score_data['score']>=score_slider[1])]
@@ -28,12 +28,27 @@ def process_data_all(range_choosed):
     score_data['score'] = score_data['score'] + ' %'
     return score_data
 
+def process_data_client(number_ID):
+    
+    id_client = data[['SK_ID_CURR','score','CODE_GENDER','AMT_INCOME_TOTAL','AMT_CREDIT',
+                    'DAYS_BIRTH','REGION_RATING_CLIENT','FLAG_OWN_CAR','FLAG_OWN_REALTY','CNT_CHILDREN']].copy()
+    id_client['score'] = 100 - (id_client['score']*100).round(2)
+    id_client['score'] = id_client['score'].astype(int)
+    id_client['score'] = id_client['score'].astype('str')
+    id_client['score'] = id_client['score'] + ' %'
+    id_client = id_client[id_client['SK_ID_CURR']==number_ID]
+    id_score = list(id_client['score'].values)
+    id_client.rename(columns={'score':'Chance de remboursement'}, inplace=True)
+    
+    return id_client[['SK_ID_CURR','Chance de remboursement']],id_client, id_score
 
+
+def top_5_id(dataframe):
+    data = dataframe.sort_values(by='score')
+    return data.head(5)
+    
 #------------------------------------------------------------------------------------------------    
 def gender_update(gender_output, data, col_name):
-    if len(gender_output) == 0:
-        data_to_render = data
-        st.write('les  2')
     if gender_output == 'Homme + Femme':
         data_to_render = data
     elif gender_output == 'Homme':
@@ -63,7 +78,10 @@ def car_update(car_owner, data, col_name):
         return data[(data[col_name]== 1)]
     else:
         return data[(data[col_name]== 0)]
-    
+
+#------------------------------------------------------------------------------------------------   
+def credit_update(credit_amount, data, col_name):
+    return data[(data[col_name]<=credit_amount[1]) & (data[col_name]>=credit_amount[0])]
 #------------------------------------------------------------------------------------------------    
 def update_data(filters):
     """Parameters
@@ -85,6 +103,7 @@ def update_data(filters):
     score_data = childrens_update(filters['number_childerns'], score_data, col_name='CNT_CHILDREN')
     score_data = house_update(filters['house_owner'], score_data, col_name='FLAG_OWN_REALTY')
     score_data = car_update(filters['car_owner'], score_data, col_name='FLAG_OWN_CAR')
+    score_data = credit_update(filters['credit_amount'], score_data, col_name='AMT_CREDIT')
     
     plot_data = score_data.head(1000)
     return plot_data
@@ -107,11 +126,11 @@ def scatter_plot(data):
                 'type': 'quantitative'
                 },
                 'y':{
-                'field':'score',
+                'field':'AMT_CREDIT',
                 'type':'quantitative'
                 },
                 'size':{
-                'field':'AMT_CREDIT',
+                'field':'AMT_INCOME_TOTAL',
                 'type':'quantitative'
                 },
                 'color':{
@@ -121,17 +140,3 @@ def scatter_plot(data):
             }, use_container_width=True)
     
 #------------------------------------------------------------------------------------------------     
-    
-def process_data_client(number_ID):
-    
-    id_client = data[['SK_ID_CURR','score','CODE_GENDER','AMT_INCOME_TOTAL','AMT_CREDIT',
-                      'DAYS_BIRTH','REGION_RATING_CLIENT']].copy()
-    id_client['score'] = 100 - (id_client['score']*100).round(2)
-    id_client['score'] = id_client['score'].astype(int)
-    id_client['score'] = id_client['score'].astype('str')
-    id_client['score'] = id_client['score'] + ' %'
-    id_client = id_client[id_client['SK_ID_CURR']==number_ID]
-    id_score = list(id_client['score'].values)
-    id_client.rename(columns={'score':'Chance de remboursement'}, inplace=True)
-    
-    return id_client[['SK_ID_CURR','Chance de remboursement']],id_client, id_score
